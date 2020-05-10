@@ -14,7 +14,7 @@
 \begin{center}
 
 \textbf{\sffamily\bfseries\huge
-OMEX Metadata Specification version 1.0\\[0.3em]
+OMEX Metadata Specification version 1.1\\[0.3em]
 }
 
 \vspace*{0.75in}
@@ -157,11 +157,11 @@ The Resource Description Framework (RDF) is a World Wide Web Consortium-recommen
 \subsection{Model-level annotations}
 A model-level annotation is an annotation that captures an aspect of the model \textit{as a whole}. Examples include an annotation that indicates the PubMed ID of the model's source publication, an annotation that indicates that the model simulates glycolysis, or an annotation that indicates the identity of the curator who encoded the model. 
 
-\subsection{Semantic annotations}
-A semantic annotation is a computer-accessible metadata item that captures, entirely or in part, the meaning of a model, model component or data element. For example, an annotation on a model variable might indicate that it represents the concentration of cytosolic glucose in a pancreatic beta cell or it might describe a purely computational feature such as the simulation time step. To further clarify, we make a distinction between semantic annotations and other types of metadata that do not indicate meaning, such as curatorial annotations that indicate model authorship, provenance annotations that indicate the origins of model components (e.g., nanopublications) or tool-dependent annotations that indicate layout information for model visualization.
+\subsection{Archive-level annotations}
+Archive-level annotations are metadata items that capture information about the archive as a whole. These may be especially important when the archive includes multiple models. These annotations can also be used to explain relationship across multiple files -- e.g., how or why a sed.ml file captures a particular simulation result from the model.
 
-\subsection{Non-semantic annotations}
-Non-semantic annotations are metadata items that capture information other than the meaning of the annotated element. Curatorial annotations, provenance and layout annotations are examples of non-semantic annotations.
+\subsection{Model component annotations}
+A model component annotation is a computer-accessible metadata item that captures, entirely or in part, the meaning of a model component or data element. For example, an annotation on a model variable might indicate that it represents the concentration of cytosolic glucose in a pancreatic beta cell or it might describe a purely computational feature such as the simulation time step.
 
 \subsection{Singular annotations}
 Singular annotations are those that are comprised of a single RDF statement linking a model or data element to a knowledge resource term. These are the types of annotations currently found throughout curated models on \href{http://www.ebi.ac.uk/biomodels/}{BioModels}. See section \ref{singularanns} for examples.
@@ -211,19 +211,38 @@ In addition to BioModels.net qualifiers to encode singular annotations, SemSim q
 
 We recommend using the identifiers.org URI format when referencing knowledge resource terms in RDF statements: identifiers.org supports a vast set of biological knowledge resources used for annotation and identifiers.org-formatted URIs are resolvable. The identifiers.org services are also capable of more complex URI resolution compared to alternative services. For example, identifiers.org is specifically built to address downtime and changing endpoints and directs users to an alternative site for a given data record as long as one is listed (one-to-many mappings) whereas persistent uniform resource locator services specify only one endpoint for URI resolution (one-to-one mappings). We also recommend using identifiers.org-formatted URIs because they use a simple, uniform nested structure that facilitates generation and parsing, and because identifiers.org reuses data providers’ record identifiers.
 
-\subsection{Serializing non-semantic annotations}
-While the COMBINE community has spent considerable time debating how to standardize semantic annotations, more discussion is needed on how to standardize other types of annotations such as those that describe model curation, provenance (including nanopublications), confidence levels, or layout information for model visualization tools. We therefore recommend that the community identifies the minimal requirements for non-semantic annotations, comes to a consensus about how to serialize them, and then revises this specification document once consensus is achieved. We note that it is important that any future additions to this specification document are in agreement with the COMBINE archive specification document. We also note that there is currently a proposal to use ORCID identifiers rather than VCard-formatted RDF blocks for indicating the identities of people in these types of non-semantic annotations. We encourage further debate on this issue within the community.  
+\subsection{Serializing model-level annotations}
+\textcolor{magenta} {New text goes here....\\
+Hmmm. what's the name space for any of my new model-level annotations?}
 
-\subsection{Serializing singular annotations}
+\begin{itemize}
+    \item \emph {model-author} This refers to the contact author of the model. This is usually the lead or contact author for the associated publication. This author may be different (of course) from the archive author or the model curator. 
+    \item \emph{model-curator} If available, this is the name of the person who provided the annotations for this model. This may be the same as the model-author. 
+    \item \emph{isDescribedBy} This is a pointer to the publication for the model. For example, a pubMed ID, or some other unique ID.
+    \item \emph{model-taxon} If applicable, this annotation describes the biological entity (e.g. species) to which the model applies. This may also be the biological entity from which the data was collected that was used to build the model. This annotation should point to something like the NCBI Taxonomy resource. 
+\end{itemize}
+
+The following is an example of a singular, model-level, annotation that indicates the PubMed ID of the model's source publication. In this case, the metadata ID for the model as a whole (e.g., the metadata ID associated with the $<$model$>$ element in an SBML model) is ``modelmeta1". (The rdf syntax used here and throughout the document is Turtle.) 
+ 
+ \verb| @prefix bqmodel: <http://biomodels.net/model-qualifiers/> . |\\*
+ \verb| @prefix pubmed: <https:identifiers.org/pubmed/> . |\\*
+ 
+ \verb| <./MyModel.sbml#modelmeta1> bqmodel:isDescribedBy pubmed:12991237> . |\\*
+ 
+.... such as those that describe model curation, provenance (including nanopublications), confidence levels, or layout information for model visualization tools. 
+
+We also note that there is currently a proposal to use ORCID identifiers rather than VCard-formatted RDF blocks for indicating the identities of people in these types of annotations. We encourage further debate on this issue within the community.  
+
+\subsection{Serializing archive-level annotations}
+\textcolor{magenta} {New text goes here....\\
+hmmm}
+
+
+\subsection{Serializing model component singular annotations}
 \label{singularanns}
 Singular annotations within COMBINE archive annotation files should be encoded as a single RDF triple. The subject of the triple is the annotated element and should be formatted as a relative URI. The predicate is the URI of a BioModels.net qualifier linking the subject to a URI from a knowledge resource or the Dublin Core Metadata Terms (\url{https://dublincore.org/specifications/dublin-core/dcmi-terms/}) qualifier \texttt{description}. The object of the triple should be an identifiers.org-formatted URI indicating a concept in a knowledge resource, or a text string for free-text definitions of model elements.
 
- The following is an example of a singular, model-level, non-semantic annotation that indicates the PubMed ID of the model's source publication. In this case, the metadata ID for the model as a whole (e.g., the metadata ID associated with the $<$model$>$ element in an SBML model) is ``modelmeta1":
  
- \verb|     <rdf:Description rdf:about="./MyModel.xml#modelmeta1">|\\*
- \verb|      <bqmodel:isDescribedBy rdf:resource="https://identifiers.org/pubmed/12991237" />|\\*
- \verb|     </rdf:Description>|\\*
-
 The following is an example singular semantic annotation indicating that the model element with metadata ID ``meta1" from the model file ``MyModel.xml" represents adenosine tri-phosphate:
 
  \verb|     <rdf:Description rdf:about="./MyModel.xml#meta1">|\\*
@@ -237,7 +256,7 @@ The following is an example free-text description of a model variable with metad
  \verb|     </rdf:Description>|\\*
  
 
-\subsection{Serializing composite semantic annotations} \label{CSAs}
+\subsection{Serializing model-component composite annotations} \label{CSAs}
 Composite semantic annotations (CSAs) are used to capture the biological meaning of model or data elements when no singular reference term is available that provides a precise enough definition. Based on the SemSim framework \cite{Gennari2011}, CSAs are comprised of two components: the \textit{physical property} that is represented, and what it is a property \textit{of}. The second component, the bearer of the property, is either a physical entity, process, force or dependency. 
 
 \subsubsection{Composite annotation for a property of a physical entity}
